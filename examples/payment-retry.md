@@ -8,7 +8,7 @@ Branch `fix/PROJ-42-payment-retry`, base `main` (auto-detected).
 
 # Retry payment charge on 503 with backoff
 
-```markdown
+````markdown
 > [!NOTE]
 > `charge()` now retries on HTTP 503 with exponential backoff instead of failing on the first transient error.
 
@@ -66,4 +66,4 @@ None. The new third argument is optional.
 
 ## 🔗 Related
 Closes #42
-```
+````
