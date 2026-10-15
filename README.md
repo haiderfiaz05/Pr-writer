@@ -12,10 +12,13 @@ Use it to generate PR descriptions with AI, write better PR summaries, speed up 
 
 - **Generates a full PR description** from commits and `git diff`: summary, bug fixes, new features, key functions, file changes, notable diffs, reviewer notes and test plan
 - **Advanced GitHub Markdown**: callouts (`[!NOTE]`, `[!WARNING]`), tables, collapsible `<details>` sections, task lists, `diff` blocks and mermaid diagrams
-- **Asks for the base branch** (`main`, `dev`, ...) instead of guessing
+- **Detects the base branch** automatically and asks only when unclear
+- **Uses your repo's PR template** if one exists, and matches your title style and ticket IDs
 - **Evidence-based**: every claim comes from the diff or commit messages, with no invented bugs
-- **Flags review risks**: leftover `console.log`, `TODO`, commented-out code, secrets, missing tests
-- **Creates the PR** with `gh pr create`, or saves `PR.md` to paste into GitHub
+- **Flags review risks**: breaking changes, leftover `console.log`, `TODO`, commented-out code, possible secrets, missing tests
+- **Skips noise**: lockfiles, generated and minified files stay out of the diff
+- **Flags**: `--draft`, `--short`, `--update`, `--no-create`, `--run-tests`, `--lang`
+- **Creates the PR** with `gh pr create` after you confirm, or saves `PR.md` to paste into GitHub
 - Works on **Ubuntu/Linux, macOS and Windows**
 
 ## Quick install
@@ -36,11 +39,13 @@ Full steps for Windows, macOS and Ubuntu, including installing Git, Claude Code 
 
 1. Commit your work on a feature branch.
 2. Run `/pr-writer` (or ask: "write a PR description for this branch").
-3. Choose the base branch to compare against.
+3. Confirm the detected base branch (or choose one if it asks).
 4. Review the generated title and body, saved as `PR.md`.
-5. Let the skill open the PR with `gh`, or paste `PR.md` into GitHub.
+5. Confirm, and the skill opens the PR with `gh`; or paste `PR.md` into GitHub.
 
 ## Example output
+
+See a full example in [`examples/payment-retry.md`](examples/payment-retry.md). Short sample:
 
 ```markdown
 > [!NOTE]
@@ -56,14 +61,16 @@ Full steps for Windows, macOS and Ubuntu, including installing Git, Claude Code 
 | Checkout failed on timeout | No retry on 503 | Retry up to 3 times with backoff | `src/api/payments.ts` |
 ```
 
-(Illustrative sample. Real output depends on your diff.)
+(Shortened and illustrative. The linked example is from a real run.)
 
 ## Documentation
 
 | Guide | What is in it |
 |---|---|
 | [Installation Guide](docs/INSTALL.md) | Install Git, Claude Code, this skill and GitHub CLI on Ubuntu, macOS and Windows; troubleshooting |
-| [What pr-writer does](docs/GUIDE.md) | Workflow diagram, output format, usage, what it reads and writes, limits |
+| [What pr-writer does](docs/GUIDE.md) | Workflow diagram, flags, output format, usage, what it reads and writes, limits |
+| [Example](examples/payment-retry.md) | A full generated PR |
+| [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) | Version history and how to help |
 
 ## FAQ
 
@@ -81,6 +88,9 @@ The description is plain Markdown and can be pasted anywhere, but automatic PR c
 
 **Does it send my code anywhere?**
 It runs inside Claude Code, so your diff is processed under your Claude Code account's normal data terms. The skill adds no other service.
+
+**Will it push or open a PR without asking?**
+No. It asks first, and `--no-create` never pushes.
 
 **Does it add a "Generated with Claude Code" line?**
 No. It never adds attribution to the PR title or body.

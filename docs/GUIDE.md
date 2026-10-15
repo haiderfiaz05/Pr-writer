@@ -11,18 +11,19 @@ Good PR descriptions take time, so most are one line long. Reviewers then have t
 ```mermaid
 flowchart TD
     A[You run /pr-writer] --> B[Shows current branch]
-    B --> C[Asks which base branch: main, dev, ...]
+    B --> C[Detects base branch, asks only if unclear]
     C --> D[Reads commits, diff, file stats]
     D --> E[Classifies changes: bugs, features, refactors, key methods]
     E --> F[Writes title + Markdown body]
     F --> G[Saves PR.md in repo root]
     G --> H{gh installed and logged in?}
-    H -- yes --> I[Pushes branch if needed and opens the PR]
+    H -- yes --> K[Asks you to confirm]
+    K --> I[Pushes branch if needed and opens the PR]
     H -- no --> J[You paste PR.md into GitHub]
 ```
 
 1. **Confirms the branch.** It always checks the branch you are on right now, so it never describes the wrong one.
-2. **Asks for the base branch.** It never guesses. Pass it in the arguments to skip the question.
+2. **Finds the base branch.** It detects it (open PR, then repo default) and asks only if unclear. Pass `base <branch>` to set it.
 3. **Gathers facts.** Commit messages, the diff against the base (only this branch's changes), file and line counts, and uncommitted work (reported separately, since it is not in the PR).
 4. **Classifies every change** into bug fixes, new features, refactors, key methods and components, and dependency or config changes.
 5. **Writes the PR.** Title under 70 characters, body in GitHub-flavored Markdown.
@@ -47,6 +48,29 @@ flowchart TD
 
 Empty sections are skipped, so small PRs stay short.
 
+## Flags
+
+| Flag | Effect |
+|---|---|
+| `base <branch>` | Use this base branch, skip detection |
+| `--draft` | Create the PR as a draft |
+| `--no-create` | Only write `PR.md`; never push or create |
+| `--short` | Short description |
+| `--update` | Update the existing PR with `gh pr edit` |
+| `--lang <language>` | Write in another language |
+| `--run-tests` | Run the project's tests and report the real result |
+
+## Smart behavior
+
+- **Base branch** is auto-detected (open PR, then the repo default branch) and asked only when unclear.
+- **Repo PR template** (`.github/pull_request_template.md`) is used if present.
+- **Noise is excluded** from the diff: lockfiles, minified, generated and snapshot files.
+- **Title style** follows your recent commits (Conventional Commits or plain).
+- **Ticket and issue links** come from the branch name and commits.
+- **Breaking-change check**: signatures, migrations, env vars, removed files, major dependency bumps.
+- **Safety scan**: leftover debug logs, TODOs, possible secrets (value never printed).
+- **Reviewers** are suggested from `CODEOWNERS`.
+
 ## Principles
 
 - **Evidence only.** Every claim must come from the diff or commit messages. If intent is unclear, it says "appears to" or leaves it out. Bugs are never invented.
@@ -70,7 +94,7 @@ Anything after `/pr-writer` is treated as optional ticket or context text. Namin
 
 - **Reads:** git history and diff of the current repo.
 - **Writes:** `PR.md` in the repo root.
-- **Runs `git push` and `gh pr create`** only if `gh` is installed and logged in. It pushes the branch when it has no upstream.
+- **Runs `git push` and `gh pr create`** only after you confirm, and only if `gh` is installed and logged in. It pushes the branch when it has no upstream.
 
 Add `PR.md` to `.gitignore` if you do not want to commit it.
 

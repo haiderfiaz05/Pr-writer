@@ -1,0 +1,12 @@
+name: Markdown lint
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: "**/*.md"
+          config: |
+            { "default": true, "MD013": false, "MD033": false, "MD041": false, "MD024": false, "MD036": false, "MD040": false, "MD060": false }

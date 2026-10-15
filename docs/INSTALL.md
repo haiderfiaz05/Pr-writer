@@ -121,7 +121,7 @@ Check: `gh auth status` should say you are logged in.
 
 1. Open a terminal in any git repo that has a feature branch.
 2. Run `claude`.
-3. Type `/pr-writer`. The skill should tell you the current branch and ask for a base branch.
+3. Type `/pr-writer`. The skill should tell you the current branch and the base branch it detected (it asks only if unclear).
 
 If `/pr-writer` is not listed, see Troubleshooting.
 
@@ -133,7 +133,7 @@ If `/pr-writer` is not listed, see Troubleshooting.
 | `gh: command not found` | Open a new terminal. On Windows, restart PowerShell. Re-run the install step. |
 | `gh auth status` says not logged in | Run `gh auth login`. |
 | PR was not created | The skill falls back to `PR.md`. Paste its contents into GitHub, or fix `gh` and ask again. |
-| `fatal: ambiguous argument 'main..HEAD'` | The base branch does not exist locally. Run `git fetch` and pick a base that exists (the skill also tries `origin/<base>`). |
+| `fatal: ambiguous argument 'main..HEAD'` | The base branch does not exist locally. Run `git fetch` and pass `base <branch>` (the skill also tries `origin/<base>`). |
 | Permission denied (publickey) when cloning over SSH | Use the HTTPS clone URL, or add an SSH key to your GitHub account. |
 
 ## Uninstall
